@@ -19,10 +19,10 @@ class CollectReddit:
 
     def get_link_karma(self, names=None):
         """"""
-        redditors = _fetch_redditors_by_name(names=names)
+        redditors = self._fetch_redditors_by_name(names=names)
 
         if redditors:
-            link_karma = map(lambda r: r.link_karma, redditors)
+            link_karma = [*map(lambda r: r.link_karma, redditors)]
             return link_karma
 
         return None
