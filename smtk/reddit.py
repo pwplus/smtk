@@ -17,19 +17,27 @@ class CollectReddit:
         """ Called when redditor (user) is found """
         pass
 
-    def get_link_karma(self, names=None):
+    def get_redditor_link_karma(self, names=None):
         """"""
         redditors = self._fetch_redditors_by_name(names=names)
 
         if redditors:
             link_karma = [*map(lambda r: r.link_karma, redditors)]
             return link_karma
+        return None
 
+    def get_redditor_comment_karma(self, names=None):
+        """"""
+        redditors = self._fetch_redditors_by_name(names=names)
+
+        if redditors: 
+            link_karma = [*map(lambda r: r.comment_karma, redditors)]
+            return link_karma
         return None
 
     def _fetch_redditors_by_name(self, names=None):
-        """"""
+        """Returns array of praw.models.Redditor"""
         if names:
             redditors = [self.api.redditor(name) for name in names]
-            return redditors;
-        return None;
+            return redditors
+        return None
