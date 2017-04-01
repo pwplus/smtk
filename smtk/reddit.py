@@ -19,8 +19,17 @@ class CollectReddit:
 
     def get_link_karma(self, names=None):
         """"""
-        if names:
-            redditors = [self.api.redditor(name) for name in names]
-            return list(map(lambda r: r.link_karma, redditors))
+        redditors = _fetch_redditors_by_name(names=names)
+
+        if redditors:
+            link_karma = map(lambda r: r.link_karma, redditors)
+            return link_karma
 
         return None
+
+    def _fetch_redditors_by_name(self, names=None):
+        """"""
+        if names:
+            redditors = [self.api.redditor(name) for name in names]
+            return redditors;
+        return None;
