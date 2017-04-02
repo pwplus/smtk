@@ -46,9 +46,15 @@ class CollectTwitter:
         """In context of twitter friends are accounts the source is following"""
         # see https://github.com/Data4Democracy/collect-social/blob/master/collect_social/twitter/get_friends.py
         # TODO by screen_names
+        friends = []
         if ids:
             for id_ in ids:
-                self._stream_friends_by_id(id_, request_limit=3)
+             friends = friends + self._stream_friends_by_id(id_, request_limit=3)
+                
+        if screen_names:
+            for screen_name in screen_names:
+                friends = friends + self._stream_friends_by_screen_name(screen_name, request_limit=3)
+        return friends
 
     def get_followers(self, ids=None, screen_names=None, request_limit=3, on_conneciton=True):
         # TODO on_connection? Param to return connections or always do it?
@@ -159,9 +165,20 @@ class CollectTwitter:
             self.on_connection(user_id, friend, type_=friend)
         return friends
 
-    def _stream_friends_by_screen_name(self, user_id):
-        # TODO
-        pass
+    def _stream_friends_by_screen_name(self, screen_name, request_limit=3):
+        kwargs = dict(
+            screen_name=screen_name,
+            cursor=-1,
+            total_count=request_limit * 5000
+        )
+
+        logger.info("Getting friends {}".format(kwargs))
+        friends = self.api.GetFriendIDs(**kwargs)
+        logger.info(
+            "Streaming connections {} friends found".format(len(friends)))
+        for friend in friends:
+            self.on_connection(screen_name, friend, type_=friend)
+        return friends
 
     def _stream_followers_by_id(self, user_id, request_limit):
         kwargs = dict(
